@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foodie - Online Food Ordering</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f7f7f7;
+    color: #333;
+}
+
+header {
+    background: #ff5722;
+    color: white;
+    padding: 18px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+nav button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    margin: 3px;
+    cursor: pointer;
+    color: #ff5722;
+    font-weight: bold;
+}
+
+.page {
+    display: none;
+}
+
+.active {
+    display: block;
+}
+
+.login-container, .form-container {
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px #ddd;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #ff5722;
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 13px;
+    margin: 9px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.main-btn {
+    width: 100%;
+    padding: 13px;
+    background: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin-top: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.hero {
+    background: linear-gradient(90deg,#ff5722,#ff9800);
+    color: white;
+    text-align: center;
+    padding: 65px 15px;
+}
+
+.hero h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.container {
+    padding: 35px 7%;
+}
+
+.search {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 20px;
+}
+
+.categories {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.categories button {
+    background: #ffe0d2;
+    color: #ff5722;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 22px;
+}
+
+.food-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: center;
+    padding-bottom: 20px;
+    box-shadow: 0 2px 10px #ddd;
+}
+
+.food-card img {
+    width: 100%;
+    height: 165px;
+    object-fit: cover;
+}
+
+.food-card h3 {
+    margin: 12px;
+}
+
+.food-card p {
+    color: #ff5722;
+    font-weight: bold;
+}
+
+.food-card button {
+    background: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 12px;
+    cursor: pointer;
+}
+
+.cart-item {
+    background: white;
+    padding: 15px;
+    margin: 12px 0;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cart-item button {
+    padding: 7px 12px;
+    background: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.total {
+    font-size: 23px;
+    color: #ff5722;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.order-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    line-height: 2;
+}
+
+.success {
+    text-align: center;
+    max-width: 500px;
+    margin: 70px auto;
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+}
+
+footer {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+@media(max-width:600px) {
+    .hero h1 {
+        font-size: 28px;
+    }
+    header {
+        justify-content: center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2 style="color:white;margin:0">🍔 Foodie</h2>
+
+    <nav>
+        <button onclick="showPage('home')">Home</button>
+        <button onclick="showPage('cart')">
+            Cart 🛒 <span id="cartCount">0</span>
+        </button>
+        <button onclick="logout()">Logout</button>
+    </nav>
+</header>
+
+<!-- LOGIN PAGE -->
+
+<section id="login" class="page active">
+
+<div class="login-container">
+    <h2>Welcome to Foodie 🍕</h2>
+    <p>Login to order your favourite food!</p>
+
+    <input type="text" id="username"
+    placeholder="Enter your name" required>
+
+    <input type="email" id="email"
+    placeholder="Enter your email" required>
+
+    <input type="password" id="password"
+    placeholder="Enter password" required>
+
+    <button class="main-btn" onclick="login()">
+        Login / Sign Up
+    </button>
+</div>
+
+</section>
+
+<!-- HOME PAGE -->
+
+<section id="home" class="page">
+
+<div class="hero">
+    <h1>Delicious Food Delivered!</h1>
+    <p>Order your favourite food at your doorstep.</p>
+</div>
+
+<div class="container">
+
+    <h2>Find Your Food 🍽️</h2>
+
+    <input class="search" type="text"
+    id="search" placeholder="Search food..."
+    oninput="displayFoods()">
+
+    <div class="categories">
+        <button onclick="filterFood('All')">All</button>
+        <button onclick="filterFood('Pizza')">Pizza</button>
+        <button onclick="filterFood('Burger')">Burger</button>
+        <button onclick="filterFood('Biryani')">Biryani</button>
+        <button onclick="filterFood('Drinks')">Drinks</button>
+    </div>
+
+    <h2>Our Popular Foods</h2>
+
+    <div class="food-grid" id="foodGrid"></div>
+
+</div>
+</section>
+
+<!-- CART PAGE -->
+
+<section id="cart" class="page">
+
+<div class="container">
+    <h2>🛒 Your Shopping Cart</h2>
+
+    <div id="cartItems"></div>
+
+    <div class="total" id="total">Total: ₹0</div>
+
+    <button class="main-btn" onclick="goToCheckout()">
+        Continue to Checkout
+    </button>
+</div>
+
+</section>
+
+<!-- CUSTOMER DETAILS PAGE -->
+
+<section id="checkout" class="page">
+
+<div class="form-container">
+
+    <h2>📍 Customer Details</h2>
+    <p>Please enter your delivery information.</p>
+
+    <form id="customerForm">
+
+        <label>Full Name *</label>
+        <input type="text" id="customerName"
+        placeholder="Enter full name" required>
+
+        <label>Mobile Number *</label>
+        <input type="tel" id="mobile"
+        placeholder="10 digit mobile number"
+        pattern="[6-9][0-9]{9}" maxlength="10" required>
+
+        <label>Email Address *</label>
+        <input type="email" id="customerEmail"
+        placeholder="Enter email address" required>
+
+        <label>House Number / Building *</label>
+        <input type="text" id="house"
+        placeholder="Enter house number" required>
+
+        <label>Street / Area *</label>
+        <input type="text" id="street"
+        placeholder="Enter street or area" required>
+
+        <label>Village / Town / City *</label>
+        <input type="text" id="city"
+        placeholder="Enter village or city" required>
+
+        <label>District *</label>
+        <input type="text" id="district"
+        placeholder="Enter district" required>
+
+        <label>State *</label>
+        <select id="state" required>
+            <option value="">Select State</option>
+            <option>Telangana</option>
+            <option>Andhra Pradesh</option>
+            <option>Karnataka</option>
+            <option>Maharashtra</option>
+            <option>Tamil Nadu</option>
+            <option>Kerala</option>
+            <option>Other</option>
+        </select>
+
+        <label>PIN Code *</label>
+        <input type="text" id="pincode"
+        placeholder="Enter 6 digit PIN code"
+        pattern="[0-9]{6}" maxlength="6" required>
+
+        <label>Delivery Instructions</label>
+        <textarea id="instructions" rows="3"
+        placeholder="Any instructions for delivery?"></textarea>
+
+        <h2 style="margin-top:20px">💳 Payment Method</h2>
+
+        <select id="payment" required>
+            <option value="">Select Payment Method</option>
+            <option value="Cash on Delivery">Cash on Delivery</option>
+            <option value="UPI (Demo)">UPI (Demo)</option>
+        </select>
+
+        <div class="order-box">
+            <h3>Order Summary</h3>
+            <div id="checkoutItems"></div>
+            <h3 id="checkoutTotal"></h3>
+        </div>
+
+        <button type="submit" class="main-btn">
+            Confirm & Place Order
+        </button>
+
+        <button type="button" class="main-btn"
+        style="background:#777"
+        onclick="showPage('cart')">
+            Back to Cart
+        </button>
+
+    </form>
+
+</div>
+</section>
+
+<!-- SUCCESS PAGE -->
+
+<section id="success" class="page">
+
+<div class="success">
+    <h1>🎉 Order Placed Successfully!</h1>
+
+    <h2>Thank You!</h2>
+
+    <p>Your food order has been received.</p>
+
+    <div class="order-box" id="finalDetails"></div>
+
+    <button class="main-btn"
+    onclick="showPage('home')">
+        Order More Food
+    </button>
+</div>
+
+</section>
+
+<footer>
+    <p>© 2026 Foodie Online Food Ordering Website</p>
+    <p>Fresh Food | Fast Delivery | Best Taste</p>
+</footer>
+
+<script>
+
+// FOOD DETAILS
+
+const foods = [
+{
+ name:"Veg Pizza",
+ category:"Pizza",
+ price:199,
+ image:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500"
+},
+{
+ name:"Cheese Burger",
+ category:"Burger",
+ price:129,
+ image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500"
+},
+{
+ name:"Chicken Biryani",
+ category:"Biryani",
+ price:249,
+ image:"https://images.unsplash.com/photo-1563379091339-03246963d96c?w=500"
+},
+{
+ name:"French Fries",
+ category:"Burger",
+ price:99,
+ image:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500"
+},
+{
+ name:"Cold Coffee",
+ category:"Drinks",
+ price:89,
+ image:"https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=500"
+},
+{
+ name:"Margherita Pizza",
+ category:"Pizza",
+ price:179,
+ image:"https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?w=500"
+},
+{
+ name:"Veg Biryani",
+ category:"Biryani",
+ price:159,
+ image:"https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500"
+},
+{
+ name:"Fresh Juice",
+ category:"Drinks",
+ price:79,
+ image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500"
+}
+];
+
+let cart = [];
+let currentCategory = "All";
+
+// LOGIN
+
+function login() {
+
+    let name = document.getElementById("username").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+
+    if(!name || !email || !password) {
+        alert("Please fill all details!");
+        return;
+    }
+
+    if(!document.getElementById("email").checkValidity()) {
+        alert("Enter a valid email!");
+        return;
+    }
+
+    sessionStorage.setItem("loggedIn","true");
+
+    document.getElementById("customerName").value = name;
+    document.getElementById("customerEmail").value = email;
+
+    alert("Welcome " + name + "!");
+
+    showPage("home");
+    displayFoods();
+}
+
+// PAGE NAVIGATION
+
+function showPage(page) {
+
+    if(page !== "login" &&
+       !sessionStorage.getItem("loggedIn")) {
+        page = "login";
+    }
+
+    document.querySelectorAll(".page").forEach(p => {
+        p.classList.remove("active");
+    });
+
+    document.getElementById(page).classList.add("active");
+
+    if(page === "cart") displayCart();
+    if(page === "checkout") displayCheckout();
+}
+
+// DISPLAY FOOD
+
+function displayFoods() {
+
+    let grid = document.getElementById("foodGrid");
+    let search = document.getElementById("search").value.toLowerCase();
+
+    grid.innerHTML = "";
+
+    let filtered = foods.filter(food => {
+
+        let categoryMatch =
+        currentCategory === "All" ||
+        food.category === currentCategory;
+
+        let searchMatch =
+        food.name.toLowerCase().includes(search);
+
+        return categoryMatch && searchMatch;
+    });
+
+    filtered.forEach(food => {
+
+        grid.innerHTML += `
+        <div class="food-card">
+            <img src="${food.image}" alt="${food.name}">
+            <h3>${food.name}</h3>
+            <p>₹${food.price}</p>
+            <button onclick="addToCart('${food.name}')">
+                Add to Cart
+            </button>
+        </div>
+        `;
+    });
+
+    if(filtered.length === 0) {
+        grid.innerHTML = "<p>No food found!</p>";
+    }
+}
+
+// FILTER CATEGORY
+
+function filterFood(category) {
+    currentCategory = category;
+    displayFoods();
+}
+
+// ADD TO CART
+
+function addToCart(name) {
+
+    let food = foods.find(f => f.name === name);
+
+    let existing = cart.find(item => item.name === name);
+
+    if(existing) {
+        existing.quantity++;
+    } else {
+        cart.push({...food, quantity:1});
+    }
+
+    updateCount();
+
+    alert(name + " added to cart!");
+}
+
+// UPDATE CART COUNT
+
+function updateCount() {
+
+    let count = cart.reduce((sum,item) =>
+        sum + item.quantity,0);
+
+    document.getElementById("cartCount").innerText = count;
+}
+
+// DISPLAY CART
+
+function displayCart() {
+
+    let items = document.getElementById("cartItems");
+    items.innerHTML = "";
+
+    if(cart.length === 0) {
+        items.innerHTML = "<h3>Your cart is empty!</h3>";
+    }
+
+    cart.forEach((item,index) => {
+
+        items.innerHTML += `
+        <div class="cart-item">
+            <div>
+                <h3>${item.name}</h3>
+                <p>₹${item.price} × ${item.quantity}</p>
+            </div>
+
+            <div>
+                <button onclick="changeQty(${index},-1)">-</button>
+                ${item.quantity}
+                <button onclick="changeQty(${index},1)">+</button>
+                <button onclick="removeItem(${index})">Remove</button>
+            </div>
+        </div>
+        `;
+    });
+
+    let total = cart.reduce((sum,item) =>
+        sum + item.price * item.quantity,0);
+
+    document.getElementById("total").innerText =
+    "Total: ₹" + total;
+}
+
+// CHANGE QUANTITY
+
+function changeQty(index,value) {
+
+    cart[index].quantity += value;
+
+    if(cart[index].quantity <= 0) {
+        cart.splice(index,1);
+    }
+
+    updateCount();
+    displayCart();
+}
+
+// REMOVE ITEM
+
+function removeItem(index) {
+
+    cart.splice(index,1);
+
+    updateCount();
+    displayCart();
+}
+
+// GO TO CHECKOUT
+
+function goToCheckout() {
+
+    if(cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    showPage("checkout");
+}
+
+// DISPLAY CHECKOUT SUMMARY
+
+function displayCheckout() {
+
+    let total = 0;
+    let html = "";
+
+    cart.forEach(item => {
+
+        let amount = item.price * item.quantity;
+        total += amount;
+
+        html += `
+        <p>${item.name} × ${item.quantity}
+        = ₹${amount}</p>
+        `;
+    });
+
+    document.getElementById("checkoutItems").innerHTML = html;
+
+    document.getElementById("checkoutTotal").innerText =
+    "Total Amount: ₹" + total;
+}
+
+// PLACE ORDER AND VALIDATE CUSTOMER DETAILS
+
+document.getElementById("customerForm").addEventListener("submit",
+function(event) {
+
+    event.preventDefault();
+
+    if(cart.length === 0) {
+        alert("Your cart is empty!");
+        showPage("cart");
+        return;
+    }
+
+    if(!this.checkValidity()) {
+        this.reportValidity();
+        return;
+    }
+
+    let name = document.getElementById("customerName").value;
+    let mobile = document.getElementById("mobile").value;
+    let house = document.getElementById("house").value;
+    let street = document.getElementById("street").value;
+    let city = document.getElementById("city").value;
+    let district = document.getElementById("district").value;
+    let state = document.getElementById("state").value;
+    let pin = document.getElementById("pincode").value;
+    let payment = document.getElementById("payment").value;
+    let instructions = document.getElementById("instructions").value;
+
+    let total = cart.reduce((sum,item) =>
+        sum + item.price * item.quantity,0);
+
+    document.getElementById("finalDetails").innerHTML = `
+        <h3>Order Details</h3>
+        <p><b>Customer:</b> ${escapeHTML(name)}</p>
+        <p><b>Mobile:</b> ${escapeHTML(mobile)}</p>
+        <p><b>Delivery Address:</b>
+        ${escapeHTML(house)}, ${escapeHTML(street)},
+        ${escapeHTML(city)}, ${escapeHTML(district)},
+        ${escapeHTML(state)} - ${escapeHTML(pin)}</p>
+        <p><b>Payment:</b> ${escapeHTML(payment)}</p>
+        <p><b>Instructions:</b> ${escapeHTML(instructions || "None")}</p>
+        <p><b>Total Bill:</b> ₹${total}</p>
+    `;
+
+    alert("Your order has been placed successfully!");
+
+    cart = [];
+    updateCount();
+
+    showPage("success");
+
+});
+
+// SAFE DISPLAY OF CUSTOMER TEXT
+
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, function(char) {
+        return {
+            '&':'&amp;',
+            '<':'&lt;',
+            '>':'&gt;',
+            '"':'&quot;',
+            "'":'&#39;'
+        }[char];
+    });
+}
+
+// LOGOUT
+
+function logout() {
+
+    sessionStorage.removeItem("loggedIn");
+
+    cart = [];
+    updateCount();
+
+    document.getElementById("customerForm").reset();
+
+    showPage("login");
+}
+
+</script>
+
+</body>
+</html>
